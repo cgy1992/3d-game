@@ -1,3 +1,4 @@
+
 class Player:
 
     def __init__(self, camera, input):
@@ -28,6 +29,12 @@ class Player:
 
         if self.input.RIGHT_KEY_PRESSED:
             self.camera.strafe(self.speed)
+
+        if self.input.UP_KEY_PRESSED:
+            self.camera.move(self.speed)
+
+        if self.input.DOWN_KEY_PRESSED:
+            self.camera.move(-self.speed)
 
         if self.input.SPACE_KEY_PRESSED:
             if self.grounded:

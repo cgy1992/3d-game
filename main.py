@@ -1,3 +1,5 @@
+# coding: utf-8
+
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
@@ -13,6 +15,9 @@ import sys
 
 class Game:
 
+    WINDOW_WIDTH = 1024
+    WINDOW_HEIGHT = 768
+
     def __init__(self):
         self.camera = Camera()
         self.input = Input()
@@ -24,9 +29,23 @@ class Game:
         glClearColor(0, 0, 0, 1)
         glClearDepth(1)
         glEnable(GL_DEPTH_TEST)
+        glEnable(GL_NORMALIZE) # нормали к единичной длине
         glDepthFunc(GL_LEQUAL)
+
         glShadeModel(GL_SMOOTH)
         glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST)
+
+        # init light
+        glEnable(GL_LIGHTING)
+        #glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE)  # двухсторонний обсчёт света
+
+        glLightModelfv(GL_LIGHT_MODEL_AMBIENT, [1, 1, 1, 1])
+        glEnable(GL_LIGHT0)
+        glLightfv(GL_LIGHT0, GL_DIFFUSE, [1, 1, 1])
+        glLightfv(GL_LIGHT0, GL_POSITION, [0, 0, 1, 1])
+        glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 45)
+
+        glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 100)
 
         # init camera
         self.camera.set_position(Vector3(0, 1, 1), Vector3(0, 1, 0), Vector3(0, 1, 0))
@@ -93,17 +112,19 @@ class Game:
             self.camera.m_up.x, self.camera.m_up.y, self.camera.m_up.z
         )
 
-        # draw_grid()
-
         glPushMatrix()
         glScalef(0.1, 0.1, 0.1)
         glTranslatef(1, 0, -30)
-        glRotatef(-90, 0, 1, 0)
+        glRotatef(90, 0, 1, 0)
 
         for obj in self.objects:
             glCallList(obj.gl_list)
 
         glPopMatrix()
+
+        glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, [self.camera.m_pos.x, self.camera.m_pos.y - 2, self.camera.m_pos.z - 10])
+
+        self.draw_grid()
 
         self.player.update()
 
@@ -136,7 +157,7 @@ class Game:
     def run(self, argv):
         glutInit(argv)
         glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH)
-        glutInitWindowSize(1024, 768)
+        glutInitWindowSize(Game.WINDOW_WIDTH, Game.WINDOW_HEIGHT)
         glutInitWindowPosition(450, 50)
         glutCreateWindow('Computer Graphics Game')
         glutDisplayFunc(self.display)
@@ -147,6 +168,7 @@ class Game:
         glutReshapeFunc(self.reshape)
         self.init_gl()
         glutMainLoop()
+
 
 if __name__ == "__main__":
     Game().run(sys.argv)

@@ -19,7 +19,6 @@ class Input:
         if ord(key) == 32:
             self.SPACE_KEY_PRESSED = True
 
-
     def register_key_up(self, key, x, y):
         if key == 'w':
             self.UP_KEY_PRESSED = False

@@ -1,3 +1,5 @@
+import math
+
 class Camera:
 
     def __init__(self):
@@ -16,6 +18,13 @@ class Camera:
         self.m_pos.z = self.m_pos.z + v_vector.x * speed
         self.m_view.x = self.m_view.x + -v_vector.z * speed
         self.m_view.z = self.m_view.z + v_vector.x * speed
+
+    def move(self, speed):
+        v_vector = self.get_view_vector()
+        self.m_pos.x = self.m_pos.x + v_vector.x * speed
+        self.m_pos.z = self.m_pos.z + v_vector.z * speed
+        self.m_view.x = self.m_view.x + v_vector.x * speed
+        self.m_view.z = self.m_view.z + v_vector.z * speed
 
     def updown(self, speed):
         self.m_pos.y += speed
