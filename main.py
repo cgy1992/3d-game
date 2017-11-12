@@ -43,14 +43,11 @@ class Game:
         glEnable(GL_LIGHT0)
         glLightfv(GL_LIGHT0, GL_DIFFUSE, [1, 1, 1])
         glLightfv(GL_LIGHT0, GL_POSITION, [0, 0, 1, 1])
-        glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 7)
+        glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 10)
         glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 100)
-        #glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 0.1)
-        #glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.1)
-        glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.1)
 
         # ambient
-        glEnable(GL_LIGHT1)
+        #glEnable(GL_LIGHT1)
         glLightfv(GL_LIGHT1, GL_DIFFUSE, [0.5, 0.5, 0.5])
         glLightfv(GL_LIGHT1, GL_POSITION, [1, 1, 0, 1])
         glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 1)
@@ -93,6 +90,7 @@ class Game:
         self.player.update()
         self.game_field.render()
 
+        glFinish()
         glutSwapBuffers()
         glutPostRedisplay()
 
