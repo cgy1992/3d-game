@@ -3,146 +3,150 @@ from OpenGL.GLUT import *
 from OpenGL.GLU import *
 
 from camera import Camera
+from model_loader import *
 from vector import Vector3
+from input import Input
+from player import Player
+
 
 import sys
 
-pos_z = -10
-camera = None
+class Game:
 
-# init opengl additional settings
-def init_gl():
+    def __init__(self):
+        self.camera = Camera()
+        self.input = Input()
+        self.player = Player(self.camera, self.input)
+        self.objects = []
 
-    global camera
+    def init_gl(self):
 
-    glClearColor(0, 0, 0, 1)
-    glClearDepth(1)
-    glEnable(GL_DEPTH_TEST)
-    glDepthFunc(GL_LEQUAL)
-    glShadeModel(GL_SMOOTH)
-    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST)
+        glClearColor(0, 0, 0, 1)
+        glClearDepth(1)
+        glEnable(GL_DEPTH_TEST)
+        glDepthFunc(GL_LEQUAL)
+        glShadeModel(GL_SMOOTH)
+        glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST)
 
-    # init camera
-    camera = Camera()
-    camera.set_position(Vector3(0, 2.5, 5), Vector3(0, 2.5, 0), Vector3(0, 1, 0))
+        # init camera
+        self.camera.set_position(Vector3(0, 1, 1), Vector3(0, 1, 0), Vector3(0, 1, 0))
 
+        # load models
+        test_model = OBJ("models/road.obj")
+        self.objects.append(test_model)
 
-def create_cube(x, y, z):
+    def create_cube(self, x, y, z, w_x=1, w_y=1, w_z=1):
+        glPushMatrix()
+        glTranslatef(x, y, z)
+        glScalef(w_x, w_y, w_z)
+        glBegin(GL_QUADS)
 
-    glPushMatrix()
-    glTranslatef(x, y, z)
-    glBegin(GL_QUADS)
+        glColor3f(0.0, 1.0, 0.0)
+        glVertex3f(1.0, 1.0, -1.0)
+        glVertex3f(-1.0, 1.0, -1.0)
+        glVertex3f(-1.0, 1.0, 1.0)
+        glVertex3f(1.0, 1.0, 1.0)
 
-    glColor3f(0.0, 1.0, 0.0)
-    glVertex3f(1.0, 1.0, -1.0)
-    glVertex3f(-1.0, 1.0, -1.0)
-    glVertex3f(-1.0, 1.0, 1.0)
-    glVertex3f(1.0, 1.0, 1.0)
+        glColor3f(1.0, 0.0, 0.0)
+        glVertex3f(1.0, -1.0, 1.0)
+        glVertex3f(-1.0, -1.0, 1.0)
+        glVertex3f(-1.0, -1.0, -1.0)
+        glVertex3f(1.0, -1.0, -1.0)
 
-    glColor3f(1.0, 0.0, 0.0)
-    glVertex3f(1.0, -1.0, 1.0)
-    glVertex3f(-1.0, -1.0, 1.0)
-    glVertex3f(-1.0, -1.0, -1.0)
-    glVertex3f(1.0, -1.0, -1.0)
+        glColor3f(0.0, 1.0, 0.0)
+        glVertex3f(1.0, 1.0, 1.0)
+        glVertex3f(-1.0, 1.0, 1.0)
+        glVertex3f(-1.0, -1.0, 1.0)
+        glVertex3f(1.0, -1.0, 1.0)
 
-    glColor3f(0.0, 1.0, 0.0)
-    glVertex3f(1.0, 1.0, 1.0)
-    glVertex3f(-1.0, 1.0, 1.0)
-    glVertex3f(-1.0, -1.0, 1.0)
-    glVertex3f(1.0, -1.0, 1.0)
+        glColor3f(1.0, 1.0, 0.0)
+        glVertex3f(1.0, -1.0, -1.0)
+        glVertex3f(-1.0, -1.0, -1.0)
+        glVertex3f(-1.0, 1.0, -1.0)
+        glVertex3f(1.0, 1.0, -1.0)
 
-    glColor3f(1.0, 1.0, 0.0)
-    glVertex3f(1.0, -1.0, -1.0)
-    glVertex3f(-1.0, -1.0, -1.0)
-    glVertex3f(-1.0, 1.0, -1.0)
-    glVertex3f(1.0, 1.0, -1.0)
+        glColor3f(0.0, 0.0, 1.0)
+        glVertex3f(-1.0, 1.0, 1.0)
+        glVertex3f(-1.0, 1.0, -1.0)
+        glVertex3f(-1.0, -1.0, -1.0)
+        glVertex3f(-1.0, -1.0, 1.0)
 
-    glColor3f(0.0, 0.0, 1.0)
-    glVertex3f(-1.0, 1.0, 1.0)
-    glVertex3f(-1.0, 1.0, -1.0)
-    glVertex3f(-1.0, -1.0, -1.0)
-    glVertex3f(-1.0, -1.0, 1.0)
+        glColor3f(1.0, 0.0, 1.0)
+        glVertex3f(1.0, 1.0, -1.0)
+        glVertex3f(1.0, 1.0, 1.0)
+        glVertex3f(1.0, -1.0, 1.0)
+        glVertex3f(1.0, -1.0, -1.0)
 
-    glColor3f(1.0, 0.0, 1.0)
-    glVertex3f(1.0, 1.0, -1.0)
-    glVertex3f(1.0, 1.0, 1.0)
-    glVertex3f(1.0, -1.0, 1.0)
-    glVertex3f(1.0, -1.0, -1.0)
-
-    glEnd()
-    glPopMatrix()
-
-
-# main render function
-def display():
-    global pos_z, camera
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-
-    glMatrixMode(GL_MODELVIEW)
-
-    glLoadIdentity()
-    gluLookAt(
-        camera.m_pos.x, camera.m_pos.y, camera.m_pos.z,
-        camera.m_view.x, camera.m_view.y, camera.m_view.z,
-        camera.m_up.x, camera.m_up.y, camera.m_up.z
-    )
-
-    draw_grid()
-
-    create_cube(0, 0, pos_z)
-    create_cube(-3, 0, pos_z)
-
-    glutSwapBuffers()
-    glutPostRedisplay()
-
-
-def draw_grid():
-    glPushMatrix()
-    for i in xrange(-500, 500, 5):
-        glBegin(GL_LINES)
-        glColor3ub(150, 190, 150)
-        glVertex3f(-500, 0, i)
-        glVertex3f(500, 0, i)
-        glVertex3f(i, 0, -500)
-        glVertex3f(i, 0, 500)
         glEnd()
-    glPopMatrix()
+        glPopMatrix()
 
+    # main render function
+    def display(self):
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-# reshaping window function
-def reshape(width, height):
-    if height == 0:
-        height = 1
+        glMatrixMode(GL_MODELVIEW)
 
-    ratio = width / height
-    glViewport(0, 0, width, height)
-    glMatrixMode(GL_PROJECTION)
-    glLoadIdentity()
-    gluPerspective(45.0, ratio, 0.1, 100.0)
+        glLoadIdentity()
+        gluLookAt(
+            self.camera.m_pos.x, self.camera.m_pos.y, self.camera.m_pos.z,
+            self.camera.m_view.x, self.camera.m_view.y, self.camera.m_view.z,
+            self.camera.m_up.x, self.camera.m_up.y, self.camera.m_up.z
+        )
 
-def keyboard(key, x, y):
-    global pos_z, camera
-    if key == 'w':
-        pos_z += 1
-    if key == 's':
-        pos_z -= 1
-    if key == 'a':
-        camera.strafe(-0.3)
-    if key == 'd':
-        camera.strafe(0.3)
+        # draw_grid()
 
+        glPushMatrix()
+        glScalef(0.1, 0.1, 0.1)
+        glTranslatef(1, 0, -30)
+        glRotatef(-90, 0, 1, 0)
 
-def main():
-    glutInit(sys.argv)
-    glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH)
-    glutInitWindowSize(1024, 768)
-    glutInitWindowPosition(450, 50)
-    glutCreateWindow('Computer Graphics Game')
-    glutDisplayFunc(display)
-    glutKeyboardFunc(keyboard)
-    glutReshapeFunc(reshape)
-    init_gl()
-    glutMainLoop()
+        for obj in self.objects:
+            glCallList(obj.gl_list)
+
+        glPopMatrix()
+
+        self.player.update()
+
+        glutSwapBuffers()
+        glutPostRedisplay()
+
+    def draw_grid(self):
+        glPushMatrix()
+        for i in xrange(-100, 100, 1):
+            glBegin(GL_LINES)
+            glColor3ub(150, 190, 150)
+            glVertex3f(-100, 0, i)
+            glVertex3f(100, 0, i)
+            glVertex3f(i, 0, -100)
+            glVertex3f(i, 0, 100)
+            glEnd()
+        glPopMatrix()
+
+    # reshaping window function
+    def reshape(self, width, height):
+        if height == 0:
+            height = 1
+
+        ratio = width / height
+        glViewport(0, 0, width, height)
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        gluPerspective(45.0, ratio, 0.1, 100.0)
+
+    def run(self, argv):
+        glutInit(argv)
+        glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH)
+        glutInitWindowSize(1024, 768)
+        glutInitWindowPosition(450, 50)
+        glutCreateWindow('Computer Graphics Game')
+        glutDisplayFunc(self.display)
+
+        glutKeyboardFunc(self.input.register_key_down)
+        glutKeyboardUpFunc(self.input.register_key_up)
+
+        glutReshapeFunc(self.reshape)
+        self.init_gl()
+        glutMainLoop()
 
 if __name__ == "__main__":
-    main()
+    Game().run(sys.argv)

@@ -17,5 +17,10 @@ class Camera:
         self.m_view.x = self.m_view.x + -v_vector.z * speed
         self.m_view.z = self.m_view.z + v_vector.x * speed
 
+    def updown(self, speed):
+        self.m_pos.y += speed
+        self.m_view.y += speed
+
+
     def get_view_vector(self):
         return self.m_view - self.m_pos
