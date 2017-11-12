@@ -18,7 +18,6 @@ class Player:
         self.camera.updown(self.velocity_y)
 
     def update_movement(self):
-
         self.velocity_y -= self.gravity
 
         if self.camera.m_pos.y <= 1:
@@ -28,7 +27,7 @@ class Player:
             self.camera.m_view.y = 1
 
         if self.input.LEFT_KEY_PRESSED and self.camera.m_pos.x >= -self.camera_bounds:
-                self.camera.strafe(-self.speed)
+            self.camera.strafe(-self.speed)
 
         if self.input.RIGHT_KEY_PRESSED and self.camera.m_pos.x <= self.camera_bounds:
             self.camera.strafe(self.speed)

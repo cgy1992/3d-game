@@ -9,7 +9,7 @@ from model_loader import *
 from vector import Vector3
 from input import Input
 from player import Player
-
+from gamefield import GameField
 
 import sys
 
@@ -22,7 +22,7 @@ class Game:
         self.camera = Camera()
         self.input = Input()
         self.player = Player(self.camera, self.input)
-        self.objects = []
+        self.game_field = GameField()
 
     def init_gl(self):
 
@@ -62,9 +62,9 @@ class Game:
         # init camera
         self.camera.set_position(Vector3(0, 1, 1), Vector3(0, 1, 0), Vector3(0, 1, 0))
 
-        # load models
-        test_model = OBJ("models/bridge.obj")
-        self.objects.append(test_model)
+        # init game field
+        self.game_field.init()
+
 
     # main render function
     def display(self):
@@ -79,18 +79,13 @@ class Game:
             self.camera.m_up.x, self.camera.m_up.y, self.camera.m_up.z
         )
 
-        glPushMatrix()
-        glTranslatef(0, -4.5, -5)
-        glScalef(0.003, 0.003, 0.003)
+        glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION,
+                  [self.camera.m_pos.x, self.camera.m_pos.y - 2, self.camera.m_pos.z - 10])  # point light
 
-        for obj in self.objects:
-            glCallList(obj.gl_list)
-
-        glPopMatrix()
-
-        glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, [self.camera.m_pos.x, self.camera.m_pos.y - 2, self.camera.m_pos.z - 10]) # point light
+        # 0, -4.5, -5, scale: 0.003
 
         self.player.update()
+        self.game_field.render()
 
         glutSwapBuffers()
         glutPostRedisplay()
@@ -113,10 +108,8 @@ class Game:
         glutInitWindowPosition(450, 50)
         glutCreateWindow('Computer Graphics Game')
         glutDisplayFunc(self.display)
-
         glutKeyboardFunc(self.input.register_key_down)
         glutKeyboardUpFunc(self.input.register_key_up)
-
         glutReshapeFunc(self.reshape)
         self.init_gl()
         glutMainLoop()
