@@ -35,14 +35,19 @@ class Game:
         glShadeModel(GL_SMOOTH)
         glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST)
 
+
+
         # init light
         glEnable(GL_LIGHTING)
 
         glEnable(GL_LIGHT0)
         glLightfv(GL_LIGHT0, GL_DIFFUSE, [1, 1, 1])
         glLightfv(GL_LIGHT0, GL_POSITION, [0, 0, 1, 1])
-        glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 45)
+        glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 7)
         glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 100)
+        #glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 0.1)
+        #glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.1)
+        glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.1)
 
         # ambient
         glEnable(GL_LIGHT1)
@@ -64,6 +69,7 @@ class Game:
 
         # init game field
         self.game_field.init()
+
 
 
     # main render function

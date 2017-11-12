@@ -77,6 +77,7 @@ class OBJ:
                 self.faces.append((face, norms, texcoords, material))
 
         self.gl_list = glGenLists(1)
+
         glNewList(self.gl_list, GL_COMPILE)
         glEnable(GL_TEXTURE_2D)
         glFrontFace(GL_CCW)
@@ -100,5 +101,6 @@ class OBJ:
                     glTexCoord2fv(self.texcoords[texture_coords[i] - 1])
                 glVertex3fv(self.vertices[vertices[i] - 1])
             glEnd()
+        glBindTexture(GL_TEXTURE_2D, 0) # fix random coloring after place model
         glDisable(GL_TEXTURE_2D)
         glEndList()
