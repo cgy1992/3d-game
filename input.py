@@ -7,6 +7,9 @@ class Input:
         self.DOWN_KEY_PRESSED = False
         self.SPACE_KEY_PRESSED = False
 
+        # for debug purposes
+        self.Q_KEY_PRESSED = False
+
     def register_key_down(self, key, x, y):
         if key == 'w':
             self.UP_KEY_PRESSED = True
@@ -18,6 +21,8 @@ class Input:
             self.RIGHT_KEY_PRESSED = True
         if ord(key) == 32:
             self.SPACE_KEY_PRESSED = True
+        if key == 'q':
+            self.Q_KEY_PRESSED = True
 
     def register_key_up(self, key, x, y):
         if key == 'w':
@@ -30,3 +35,5 @@ class Input:
             self.RIGHT_KEY_PRESSED = False
         if ord(key) == 32:
             self.SPACE_KEY_PRESSED = False
+        if key == 'q':
+            self.Q_KEY_PRESSED = False

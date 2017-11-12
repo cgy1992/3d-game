@@ -26,7 +26,7 @@ class Game:
 
     def init_gl(self):
 
-        glClearColor(0, 0, 0, 1)
+        glClearColor(0.5, 0.5, 0.5, 1)
         glClearDepth(1)
         glEnable(GL_DEPTH_TEST)
         glEnable(GL_NORMALIZE) # нормали к единичной длине
@@ -37,67 +37,34 @@ class Game:
 
         # init light
         glEnable(GL_LIGHTING)
-        #glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE)  # двухсторонний обсчёт света
 
-        glLightModelfv(GL_LIGHT_MODEL_AMBIENT, [1, 1, 1, 1])
         glEnable(GL_LIGHT0)
         glLightfv(GL_LIGHT0, GL_DIFFUSE, [1, 1, 1])
         glLightfv(GL_LIGHT0, GL_POSITION, [0, 0, 1, 1])
         glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 45)
-
         glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 100)
+
+        # ambient
+        glEnable(GL_LIGHT1)
+        glLightfv(GL_LIGHT1, GL_DIFFUSE, [0.5, 0.5, 0.5])
+        glLightfv(GL_LIGHT1, GL_POSITION, [1, 1, 0, 1])
+        glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 1)
+
+        # init fog
+        glFogi(GL_FOG_MODE, GL_EXP2)
+        glFogfv(GL_FOG_COLOR, [0.5, 0.5, 0.5, 1])
+        glFogf(GL_FOG_DENSITY, 0.15)
+        glHint(GL_FOG_HINT, GL_FASTEST)
+        glFogf(GL_FOG_START, 1.0)
+        glFogf(GL_FOG_END, 5.0)
+        glEnable(GL_FOG)
 
         # init camera
         self.camera.set_position(Vector3(0, 1, 1), Vector3(0, 1, 0), Vector3(0, 1, 0))
 
         # load models
-        test_model = OBJ("models/road.obj")
+        test_model = OBJ("models/bridge.obj")
         self.objects.append(test_model)
-
-    def create_cube(self, x, y, z, w_x=1, w_y=1, w_z=1):
-        glPushMatrix()
-        glTranslatef(x, y, z)
-        glScalef(w_x, w_y, w_z)
-        glBegin(GL_QUADS)
-
-        glColor3f(0.0, 1.0, 0.0)
-        glVertex3f(1.0, 1.0, -1.0)
-        glVertex3f(-1.0, 1.0, -1.0)
-        glVertex3f(-1.0, 1.0, 1.0)
-        glVertex3f(1.0, 1.0, 1.0)
-
-        glColor3f(1.0, 0.0, 0.0)
-        glVertex3f(1.0, -1.0, 1.0)
-        glVertex3f(-1.0, -1.0, 1.0)
-        glVertex3f(-1.0, -1.0, -1.0)
-        glVertex3f(1.0, -1.0, -1.0)
-
-        glColor3f(0.0, 1.0, 0.0)
-        glVertex3f(1.0, 1.0, 1.0)
-        glVertex3f(-1.0, 1.0, 1.0)
-        glVertex3f(-1.0, -1.0, 1.0)
-        glVertex3f(1.0, -1.0, 1.0)
-
-        glColor3f(1.0, 1.0, 0.0)
-        glVertex3f(1.0, -1.0, -1.0)
-        glVertex3f(-1.0, -1.0, -1.0)
-        glVertex3f(-1.0, 1.0, -1.0)
-        glVertex3f(1.0, 1.0, -1.0)
-
-        glColor3f(0.0, 0.0, 1.0)
-        glVertex3f(-1.0, 1.0, 1.0)
-        glVertex3f(-1.0, 1.0, -1.0)
-        glVertex3f(-1.0, -1.0, -1.0)
-        glVertex3f(-1.0, -1.0, 1.0)
-
-        glColor3f(1.0, 0.0, 1.0)
-        glVertex3f(1.0, 1.0, -1.0)
-        glVertex3f(1.0, 1.0, 1.0)
-        glVertex3f(1.0, -1.0, 1.0)
-        glVertex3f(1.0, -1.0, -1.0)
-
-        glEnd()
-        glPopMatrix()
 
     # main render function
     def display(self):
@@ -113,35 +80,20 @@ class Game:
         )
 
         glPushMatrix()
-        glScalef(0.1, 0.1, 0.1)
-        glTranslatef(1, 0, -30)
-        glRotatef(90, 0, 1, 0)
+        glTranslatef(0, -4.5, -5)
+        glScalef(0.003, 0.003, 0.003)
 
         for obj in self.objects:
             glCallList(obj.gl_list)
 
         glPopMatrix()
 
-        glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, [self.camera.m_pos.x, self.camera.m_pos.y - 2, self.camera.m_pos.z - 10])
-
-        self.draw_grid()
+        glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, [self.camera.m_pos.x, self.camera.m_pos.y - 2, self.camera.m_pos.z - 10]) # point light
 
         self.player.update()
 
         glutSwapBuffers()
         glutPostRedisplay()
-
-    def draw_grid(self):
-        glPushMatrix()
-        for i in xrange(-100, 100, 1):
-            glBegin(GL_LINES)
-            glColor3ub(150, 190, 150)
-            glVertex3f(-100, 0, i)
-            glVertex3f(100, 0, i)
-            glVertex3f(i, 0, -100)
-            glVertex3f(i, 0, 100)
-            glEnd()
-        glPopMatrix()
 
     # reshaping window function
     def reshape(self, width, height):

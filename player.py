@@ -5,10 +5,13 @@ class Player:
         self.camera = camera
         self.input = input
 
-        self.speed = 0.05
+        self.speed = 0.08
         self.velocity_y = 0
         self.gravity = 0.005
         self.grounded = False
+        self.jump_height = 0.08
+
+        self.camera_bounds = 1.1
 
     def update(self):
         self.update_movement()
@@ -24,10 +27,10 @@ class Player:
             self.camera.m_pos.y = 1
             self.camera.m_view.y = 1
 
-        if self.input.LEFT_KEY_PRESSED:
-            self.camera.strafe(-self.speed)
+        if self.input.LEFT_KEY_PRESSED and self.camera.m_pos.x >= -self.camera_bounds:
+                self.camera.strafe(-self.speed)
 
-        if self.input.RIGHT_KEY_PRESSED:
+        if self.input.RIGHT_KEY_PRESSED and self.camera.m_pos.x <= self.camera_bounds:
             self.camera.strafe(self.speed)
 
         if self.input.UP_KEY_PRESSED:
@@ -38,9 +41,9 @@ class Player:
 
         if self.input.SPACE_KEY_PRESSED:
             if self.grounded:
-                self.velocity_y = 0.1
+                self.velocity_y = self.jump_height
                 self.grounded = False
         else:
-            if self.velocity_y > 0.1:
-                self.velocity_y = 0.1
+            if self.velocity_y > self.jump_height:
+                self.velocity_y = self.jump_height
 
