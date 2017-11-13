@@ -22,7 +22,7 @@ class Game:
         self.camera = Camera()
         self.input = Input()
         self.player = Player(self.camera, self.input)
-        self.game_field = GameField()
+        self.game_field = GameField(self.player)
 
     def init_gl(self):
 
@@ -48,9 +48,9 @@ class Game:
 
         # ambient
         #glEnable(GL_LIGHT1)
-        glLightfv(GL_LIGHT1, GL_DIFFUSE, [0.5, 0.5, 0.5])
-        glLightfv(GL_LIGHT1, GL_POSITION, [1, 1, 0, 1])
-        glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 1)
+        #glLightfv(GL_LIGHT1, GL_DIFFUSE, [0.5, 0.5, 0.5])
+        #glLightfv(GL_LIGHT1, GL_POSITION, [1, 1, 0, 1])
+        #glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 1)
 
         # init fog
         glFogi(GL_FOG_MODE, GL_EXP2)
@@ -116,6 +116,7 @@ class Game:
         glutKeyboardUpFunc(self.input.register_key_up)
         glutReshapeFunc(self.reshape)
         self.init_gl()
+        print(glGetString(GL_VENDOR))
         glutMainLoop()
 
 

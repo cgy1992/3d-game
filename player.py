@@ -1,3 +1,5 @@
+from vector import Vector3
+
 
 class Player:
 
@@ -18,6 +20,11 @@ class Player:
         self.camera.updown(self.velocity_y)
 
     def update_movement(self):
+
+        if self.camera.m_pos.z < -44:
+            # NEED RE-RENDER MODELS!!!
+            self.camera.set_position(Vector3(0, 1, 1), Vector3(0, 1, 0), Vector3(0, 1, 0)) # reset to defaults
+
         self.velocity_y -= self.gravity
 
         if self.camera.m_pos.y <= 1:

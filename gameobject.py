@@ -10,11 +10,15 @@ class GameObject:
         self.rot_coord = Vector3(0, 0, 0)
         self.object = None
         self.hidden = False
+        self.name = ''
+        self.collide_distance = 0
 
-    def load(self, position, size, object):
+    def load(self, name, position, size, object, collide_distance=0):
         self.position = position
         self.size = size
         self.object = object
+        self.name = name
+        self.collide_distance = collide_distance
         return self
 
     def set_position(self, position):
