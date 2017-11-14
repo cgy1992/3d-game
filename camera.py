@@ -30,6 +30,5 @@ class Camera:
         self.m_pos.y += speed
         self.m_view.y += speed
 
-
     def get_view_vector(self):
         return self.m_view - self.m_pos
