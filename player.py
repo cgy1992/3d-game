@@ -38,11 +38,14 @@ class Player:
         if self.input.RIGHT_KEY_PRESSED and self.camera.m_pos.x <= self.camera_bounds:
             self.camera.strafe(self.speed)
 
-        if self.input.UP_KEY_PRESSED:
-            self.camera.move(self.speed)
+        if self.input.game_field.parameters['free_walk'] is True:
+            if self.input.UP_KEY_PRESSED:
+                self.camera.move(self.speed)
 
-        if self.input.DOWN_KEY_PRESSED:
-            self.camera.move(-self.speed)
+            if self.input.DOWN_KEY_PRESSED:
+                self.camera.move(-self.speed)
+        else:
+            self.camera.move(self.speed) # constantly move towards
 
         if self.input.SPACE_KEY_PRESSED:
             if self.grounded:

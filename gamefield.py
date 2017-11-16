@@ -12,6 +12,12 @@ class GameField:
         self.aircraft_rot = 0
         self.player = player
 
+        self.parameters = {
+            'fog': True,
+            'light': True,
+            'free_walk': False
+        }
+
     def init(self):
         bridge = GameObject().load(
             'bridge',
@@ -75,11 +81,27 @@ class GameField:
             self.objects[i].set_rotation(rot, Vector3(0, 1, 0))
             self.objects[i].set_position(coords[i - 1])
 
+    def set_parameter(self, name):
+        if name == 'fog':
+            if self.parameters['fog'] is True:
+                glDisable(GL_FOG)
+            else:
+                glEnable(GL_FOG)
+
+        if name == 'light':
+            if self.parameters['light'] is True:
+                glDisable(GL_LIGHT0)
+            else:
+                glEnable(GL_LIGHT0)
+
+
+        self.parameters[name] = not self.parameters[name]
+
     def render(self):
+
         self.aircraft_rot += 1.5
 
-        if self.player.camera.m_pos.z < -44: # level done
-            # NEED RE-RENDER MODELS!!!
+        if self.player.camera.m_pos.z < -44 and self.parameters['free_walk'] is False: # level done
             self.shuffle_field()
             self.player.teleport_to_spawn()
 
@@ -90,14 +112,14 @@ class GameField:
             if obj.name == 'aircraft':
                 obj.set_rotation(self.aircraft_rot, Vector3(0, 1, 0))
 
-            if obj.name not in ['bridge', 'bridge2']:
+            if obj.name not in ['bridge', 'bridge2']: # no display models
                 if player_distance.z < -0.1 or player_distance.z > 15:
                     obj.hidden = True
                 else:
                     obj.hidden = False
 
             # colission detection
-            if m_dist < obj.collide_distance:
+            if m_dist < obj.collide_distance and self.parameters['free_walk'] is False:
                 self.shuffle_field()
                 self.player.teleport_to_spawn()
                 #print('collide with ' + obj.name)

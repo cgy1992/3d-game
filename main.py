@@ -20,9 +20,10 @@ class Game:
 
     def __init__(self):
         self.camera = Camera()
-        self.input = Input()
+        self.input = Input([])
         self.player = Player(self.camera, self.input)
         self.game_field = GameField(self.player)
+        self.input.game_field = self.game_field # set game field
 
     def init_gl(self):
 
