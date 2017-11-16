@@ -2,6 +2,7 @@ from gameobject import GameObject
 from model_loader import *
 from vector import Vector3
 import math
+import random
 
 
 class GameField:
@@ -56,8 +57,31 @@ class GameField:
     def add(self, gameobject):
         self.objects.append(gameobject)
 
+    def shuffle_field(self):
+        coords = [
+            Vector3(-0.7, 0.45, -20),
+            Vector3(0.7, 0.45, -5),
+            Vector3(0.4, 0.45, -35)
+        ]
+
+        random.shuffle(coords)
+
+        for i in range(1, len(self.objects)):
+            if self.objects[i].name == 'aircraft': # prevent ship to fall down
+                coords[i - 1].y = 1
+
+            # get random rotation
+            rot = random.randint(-180, 180)
+            self.objects[i].set_rotation(rot, Vector3(0, 1, 0))
+            self.objects[i].set_position(coords[i - 1])
+
     def render(self):
         self.aircraft_rot += 1.5
+
+        if self.player.camera.m_pos.z < -44: # level done
+            # NEED RE-RENDER MODELS!!!
+            self.shuffle_field()
+            self.player.teleport_to_spawn()
 
         for obj in self.objects:
             player_distance = self.player.camera.m_pos - obj.position # calc player distance to disable rendering objects
@@ -74,7 +98,9 @@ class GameField:
 
             # colission detection
             if m_dist < obj.collide_distance:
-                print('collide with ' + obj.name)
+                self.shuffle_field()
+                self.player.teleport_to_spawn()
+                #print('collide with ' + obj.name)
 
             obj.render()
 

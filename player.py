@@ -19,11 +19,10 @@ class Player:
         self.update_movement()
         self.camera.updown(self.velocity_y)
 
-    def update_movement(self):
+    def teleport_to_spawn(self):
+        self.camera.set_position(Vector3(0, 1, 1), Vector3(0, 1, 0), Vector3(0, 1, 0))  # reset to defaults
 
-        if self.camera.m_pos.z < -44:
-            # NEED RE-RENDER MODELS!!!
-            self.camera.set_position(Vector3(0, 1, 1), Vector3(0, 1, 0), Vector3(0, 1, 0)) # reset to defaults
+    def update_movement(self):
 
         self.velocity_y -= self.gravity
 
