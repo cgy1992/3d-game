@@ -80,7 +80,7 @@ class OBJ:
 
         glNewList(self.gl_list, GL_COMPILE)
         glEnable(GL_TEXTURE_2D)
-        glFrontFace(GL_CCW)
+
         for face in self.faces:
             vertices, normals, texture_coords, material = face
 
@@ -101,6 +101,6 @@ class OBJ:
                     glTexCoord2fv(self.texcoords[texture_coords[i] - 1])
                 glVertex3fv(self.vertices[vertices[i] - 1])
             glEnd()
-        glBindTexture(GL_TEXTURE_2D, 0) # fix random coloring after place model
+        glBindTexture(GL_TEXTURE_2D, 0) #  random coloring after fixplace model
         glDisable(GL_TEXTURE_2D)
         glEndList()

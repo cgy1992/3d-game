@@ -45,9 +45,9 @@ class Game:
         glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 100) # экспонента убывания интенсивности
 
         # ambient
-        #glEnable(GL_LIGHT1)
-        #glLightfv(GL_LIGHT1, GL_DIFFUSE, [0.5, 0.5, 0.5])
-        #glLightfv(GL_LIGHT1, GL_POSITION, [1, 1, 0, 1])
+        glEnable(GL_LIGHT1)
+        glLightfv(GL_LIGHT1, GL_DIFFUSE, [0.1, 0.1, 0.1])
+        glLightfv(GL_LIGHT1, GL_POSITION, [1, 1, 0, 1])
 
         # init fog
         glFogi(GL_FOG_MODE, GL_EXP2) # алгоритм тумана
@@ -57,6 +57,10 @@ class Game:
         glFogf(GL_FOG_START, 1.0) # глубина начала тумана
         glFogf(GL_FOG_END, 5.0) # конец тумана
         glEnable(GL_FOG)
+
+        # face culling
+        glEnable(GL_CULL_FACE) # включаем возможность пропуска отрисовки невидимых обьектов
+        glCullFace(GL_BACK) # убираем отрисовку всего что сзади обьекта
 
         # init camera
         self.camera.set_position(Vector3(0, 1, 1), Vector3(0, 1, 0), Vector3(0, 1, 0))
@@ -70,7 +74,7 @@ class Game:
     def display(self):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-        glMatrixMode(GL_MODELVIEW) # выбор трехмерной матрицы и далее изменения будут в рамках неё
+        glMatrixMode(GL_MODELVIEW) # переключение матрицы чтобы координаты модели (позиция, поворот, размер) преобразовывались в мировые координаты
 
         glLoadIdentity() # единичная матрица
         gluLookAt(
@@ -96,7 +100,7 @@ class Game:
 
         ratio = width / height
         glViewport(0, 0, width, height) # указываем рабочую область координат
-        glMatrixMode(GL_PROJECTION) # матрица проекции
+        glMatrixMode(GL_PROJECTION) # переключение матрицы проекции для настройки вида камеры в мировых координатах (увеличение, соотношение сторон, угол просмотра)
         glLoadIdentity()
         gluPerspective(45.0, ratio, 0.1, 100.0) # делаем так, чтобы видеть как человек
 
